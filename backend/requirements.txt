@@ -4,3 +4,7 @@ pydantic
 openai
 python-multipart
 httpx
+
+google-generativeai
+requests
+urllib3
