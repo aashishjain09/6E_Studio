@@ -1,45 +1,60 @@
+# backend/app/openai_client.py
+import base64
 import os
+from pathlib import Path
 from typing import Optional
+from uuid import uuid4
 
 from openai import OpenAI
+
+DATA_DIR = Path(__file__).resolve().parent.parent / "data" / "generated_images"
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
 class OpenAIClient:
     def __init__(self):
         self.api_key = os.getenv("OPENAI_API_KEY")
-        # Only instantiate the real client when a key is present.
-        # This keeps the app runnable without secrets (stub mode).
+        self.text_model = os.getenv("OPENAI_TEXT_MODEL", "gpt-4.1-mini")
+        self.image_model = os.getenv("OPENAI_IMAGE_MODEL", "gpt-image-1")
+        self.image_size = os.getenv("OPENAI_IMAGE_SIZE", "1024x1024")
         self._client: Optional[OpenAI] = OpenAI(api_key=self.api_key) if self.api_key else None
 
     def generate_text(self, prompt: str) -> str:
         if self._client is None:
-            # Stub: return a clearly labelled placeholder so UI can render it.
             return f"[stub] Campaign copy for: {prompt[:120]}"
 
-        response = self._client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a creative studio assistant."},
-                {
-                    "role": "user",
-                    "content": f"Generate campaign copy for the following brief: {prompt}",
-                },
-            ],
-            max_tokens=300,
-            temperature=0.8,
+        response = self._client.responses.create(
+            model=self.text_model,
+            instructions=(
+                "You are a senior social media copywriter. "
+                "Write concise, ready-to-post campaign text. "
+                "Return only the final answer, no preamble."
+            ),
+            input=(
+                "Create social content for this brief:\n"
+                f"{prompt}\n\n"
+                "Return a strong caption, CTA, and short hashtag set."
+            ),
         )
-        return response.choices[0].message.content.strip()
+
+        text = getattr(response, "output_text", "")
+        return text.strip() if text else "No text was returned by the model."
 
     def generate_image(self, prompt: str) -> Optional[str]:
         if self._client is None:
-            # Stub: return a public placeholder image so the UI renders something.
-            return "https://placehold.co/512x512/1a1a2e/ffffff?text=6E+Studio"
+            return None
 
-        response = self._client.images.generate(
-            model="dall-e-3",          # dall-e-3 is the current default; swap to dall-e-2 for cheaper runs
+        result = self._client.images.generate(
+            model=self.image_model,
             prompt=prompt,
             n=1,
-            size="1024x1024",          # dall-e-3 minimum; use "512x512" only for dall-e-2
-            response_format="url",
+            size=self.image_size,
         )
-        return response.data[0].url
+
+        if not result.data or not getattr(result.data[0], "b64_json", None):
+            return None
+
+        image_bytes = base64.b64decode(result.data[0].b64_json)
+        out_path = DATA_DIR / f"{uuid4().hex}.png"
+        out_path.write_bytes(image_bytes)
+        return str(out_path)
