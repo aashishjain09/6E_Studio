@@ -1,4 +1,5 @@
 6E Creative Studio:
+
 Problem Statement: Create campaign or poster images based on user's message on project basis.
 
 Pages to be created:

@@ -12,8 +12,8 @@ from backend.app import prompts
 # ============================================================
 # CONFIGURATION - Your API Keys
 # ============================================================
-GEMINI_API_KEY = os.environ['GEMINI_API_KEY']
-OPENAI_API_KEY = os.environ['OPENAI_API_KEY']
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
+OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 
 AZURE_ENDPOINT = "https://openai-lab37-hackathon.openai.azure.com"
 AZURE_API_VERSION = "2025-04-01-preview"
