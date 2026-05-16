@@ -3,6 +3,13 @@ from typing import Optional
 from uuid import UUID, uuid4
 from pydantic import BaseModel, Field, HttpUrl
 
+class AssetResponse(BaseModel):
+    id: UUID
+    name: str
+    file_type: str
+    file_path: str
+    created_at: datetime
+
 class ProjectCreateRequest(BaseModel):
     title: str = Field(..., description="Project title")
     message: str = Field(..., description="Creative brief or campaign description")
@@ -17,6 +24,12 @@ class ProjectResponse(BaseModel):
     generated_text: Optional[str] = None
     generated_image_url: Optional[HttpUrl] = None
     status: str = "draft"
+    assets: list[AssetResponse] = Field(default_factory=list)
+
+class AssetUploadRequest(BaseModel):
+    filename: str
+    file_type: str
+    content: str
 
 class GenerateRequest(BaseModel):
     project_id: UUID
