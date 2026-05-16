@@ -1,0 +1,27 @@
+6E Creative Studio:
+Problem Statement: Create campaign or poster images based on user's message on project basis.
+
+Pages to be created:
+1. Landing Page - 1 click login without AUTH
+2. Projects - collection of projects and option to create new project
+   2.1 Social - Sidepane: Campaign details, Creative description message
+   2.2 Copywriting - 
+   2.3 Banner
+   2.4 Image Edit
+   2.5 Image Generation
+3. Explore - collection of generated images ordered by date
+
+Component List:
+1. LLM Agents with System Message to generate images and text
+2. Frontend with interactive cards, buttons, fields etc.
+3. Backend - connect to LLM, store project data (image and text), frontend through FastAPI endpoints, dropdown with lists of social sites etc, 
+
+Task List:
+1. Barebones frontend with pages and buttons to show working functionality
+2. Backend - Python, FastAPI, OpenAI with keys
+3. Agent configuration files to query to the LLM
+
+Ashish: Backend + frontend (barebones) code | Modular repo structure
+Simran: Frontend design and workflow. Navigation and User Journey (happy path, alternate path, error path)
+Shreya: LLM integration and config (system prompt, api key, input and output format, 
+

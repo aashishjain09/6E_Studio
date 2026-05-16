@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+.env.*
+venv/
+.venv/
+*.sqlite3
+
+# Streamlit
+.streamlit/
+
+# Project data
+backend/data/projects.json
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
